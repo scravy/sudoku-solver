@@ -1,13 +1,12 @@
 package sudokusolver;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class SudokuSolver {
 
-    public static class Sudoku implements Cloneable {
+    @SuppressWarnings("WeakerAccess")
+    public static final class Sudoku implements Cloneable {
 
         private final int[] grid;
 
@@ -180,37 +179,6 @@ public class SudokuSolver {
             return false;
         }
 
-        public void multisolve(final Function<Sudoku, Boolean> callback) {
-            if (!isValid()) {
-                return;
-            }
-            multisolve(order(), 0, callback);
-        }
-
-        private boolean multisolve(final int[][] order, final int ix, final Function<Sudoku, Boolean> callback) {
-            if (ix == 81) {
-                if (isSolved()) {
-                    return callback.apply(clone());
-                }
-                return true;
-            }
-            final int x = order[ix][0];
-            final int y = order[ix][1];
-            final int d = get(x, y);
-            final Set<Integer> cs = candidates(x, y);
-            if (cs.isEmpty()) {
-                return true;
-            }
-            for (final int c : cs) {
-                set(x, y, c);
-                if (!multisolve(adjustOrder(order.clone(), ix + 1), ix + 1, callback)) {
-                    return false;
-                }
-            }
-            set(x, y, d);
-            return true;
-        }
-
         public String toString() {
             final StringBuilder b = new StringBuilder();
             for (int i = 0; i < 9; i += 1) {
@@ -221,6 +189,7 @@ public class SudokuSolver {
             return b.toString();
         }
 
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
         @Override
         public Sudoku clone() {
             return new Sudoku(grid.clone());
@@ -468,22 +437,6 @@ public class SudokuSolver {
         System.out.println(s.isValid());
         System.out.println(s.isSolved());
         System.out.println(s.toString());
-    }
-
-    private static void run2(final Sudoku s) {
-        System.out.println("\n--------\n");
-        System.out.println(s);
-        final long started = System.nanoTime();
-        s.multisolve(new Function<Sudoku, Boolean>() {
-            private int results = 0;
-            @Override
-            public Boolean apply(final Sudoku sudoku) {
-                results += 1;
-                System.out.println(sudoku);
-                return results <= 1;
-            }
-        });
-        System.out.printf("Took %dms\n", (System.nanoTime() - started) / 1000000);
     }
 
 }
