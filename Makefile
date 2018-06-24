@@ -1,5 +1,5 @@
 run: src/sudokusolver/SudokuSolver.class
-	java -cp src/ sudokusolver.SudokuSolver
+	java -ea -cp src/ sudokusolver.SudokuSolver
 
 src/sudokusolver/SudokuSolver.class: src/sudokusolver/SudokuSolver.java
 	javac src/sudokusolver/SudokuSolver.java
